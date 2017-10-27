@@ -74,8 +74,9 @@ function handleMessage(message) {
   req.end();
 });*/
 //TODO queued commands...
-var address = config.useHttps ? 'https://' : 'http://'
+var address = (config.useHttps ? 'https://' : 'http://')
               + config.mq.host + ':' + config.mq.port + '/queue/' + config.clientId;
+console.log('connecting to:' + address);
 var es = new eventsource(address, headers);
 es.addEventListener('message', message => {
   if (!!message) {
