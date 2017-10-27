@@ -51,6 +51,9 @@ function handleMessage(message) {
       console.log('unmuteing');
       tv.control.volume.unmute();
       break;
+    case 'pause':
+      console.log('pausing');
+      break;
     default:
       console.log('unimplemented message: ' + message.message);
   }
@@ -79,6 +82,7 @@ var address = (config.useHttps ? 'https://' : 'http://')
 console.log('connecting to:' + address);
 var es = new eventsource(address, headers);
 es.addEventListener('message', message => {
+  console.log("recieved message" + message);
   if (!!message) {
     var data = JSON.parse(message.data);
     if (!!data) {
