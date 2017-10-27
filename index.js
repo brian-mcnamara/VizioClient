@@ -1,6 +1,8 @@
 let smartcast = require('vizio-smart-cast');
 let config = require('config');
 let btoa = require('btoa');
+let wakeOnLan = require('node-wol');
+let eventsource = require('eventsource');
 var http
 if (config.useHttps) {
   console.log('https enabled');
@@ -12,8 +14,10 @@ if (config.useHttps) {
 console.log('configuration:' + JSON.stringify(config));
 
 let headers= {
-  Authorization: 'Basic ' + btoa(config.mq.username + ':' + config.mq.token),
-  'Content-Type' : 'application/json'
+  headers : {
+    Authorization: 'Basic ' + btoa(config.mq.username + ':' + config.mq.token),
+    'Content-Type' : 'application/json'
+  }
 };
 
 let http_config = {
@@ -32,7 +36,7 @@ function handleMessage(message) {
   switch (message.message) {
     case 'powerOn':
       console.log('turning on');
-      tv.control.power.on();
+      wakeOnLan.wake(config.tv.mac, tv.control.power.on);
       break;
     case 'powerOff':
       console.log('turning off');
@@ -44,7 +48,8 @@ function handleMessage(message) {
 
 }
 
-(function makeRequest() {
+//Legacy
+/*(function makeRequest() {
   console.log('Polling mq');
   var req = http.request(http_config, (res) => {
     res.on('data', (data) => {
@@ -58,4 +63,16 @@ function handleMessage(message) {
     setTimeout(makeRequest, config.pollTime);
   });
   req.end();
-})();
+});*/
+//TODO queued commands...
+var address = config.useHttps ? 'https://' : 'http://'
+              + config.mq.host + ':' + config.mq.port + '/queue/' + config.clientId;
+var es = new eventsource(address, headers);
+es.addEventListener('message', message => {
+  if (!!message) {
+    var data = JSON.parse(message.data);
+    if (!!data) {
+      handleMessage(data);
+    }
+  }
+})

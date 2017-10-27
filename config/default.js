@@ -3,8 +3,9 @@ module.exports = {
   clientId: 'TV',
   pollTime: 5000,
   tv : {
-    ip: '192.168.1.147',
-    token: 'Zymyzcea0e'
+    ip: '192.168.1.180',
+    mac: '',
+    token: ''
   },
   mq : {
     host : '',
