@@ -36,14 +36,23 @@ function handleMessage(message) {
   switch (message.message) {
     case 'powerOn':
       console.log('turning on');
-      wakeOnLan.wake(config.tv.mac, tv.control.power.on);
+      wakeOnLan.wake(config.tv.mac,
+        tv.control.power.on);
       break;
     case 'powerOff':
       console.log('turning off');
       tv.control.power.off();
       break;
+    case 'mute':
+      console.log('muteing');
+      tv.control.volue.mute();
+      break;
+    case 'unmute':
+      console.log('unmuteing');
+      tv.control.volume.unmute();
+      break;
     default:
-
+      console.log('unimplemented message: ' + message.message);
   }
 
 }
