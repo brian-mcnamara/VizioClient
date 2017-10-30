@@ -7,6 +7,9 @@ module.exports = {
     mac: '',
     token: ''
   },
+  directv : {
+    ip : '192.168.1.117'
+  },
   mq : {
     host : '',
     port: '',

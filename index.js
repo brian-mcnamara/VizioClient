@@ -3,6 +3,7 @@ let config = require('config');
 let btoa = require('btoa');
 let wakeOnLan = require('node-wol');
 let eventsource = require('eventsource');
+let directv = require('directv-remote');
 var http
 if (config.useHttps) {
   console.log('https enabled');
@@ -28,6 +29,8 @@ let http_config = {
   headers : headers
 };
 
+let dtv = new directv.Remote(config.directv.ip);
+
 let tv = new smartcast(config.tv.ip);
 tv.pairing.useAuthToken(config.tv.token);
 
@@ -45,7 +48,7 @@ function handleMessage(message) {
       break;
     case 'mute':
       console.log('muteing');
-      tv.control.volue.mute();
+      tv.control.volume.mute();
       break;
     case 'unmute':
       console.log('unmuteing');
@@ -53,6 +56,11 @@ function handleMessage(message) {
       break;
     case 'pause':
       console.log('pausing');
+      dtv.processKey('pause');
+      break;
+    case 'play':
+      console.log('playing');
+      dtv.processKey('play');
       break;
     default:
       console.log('unimplemented message: ' + message.message);
