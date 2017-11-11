@@ -79,6 +79,12 @@ function handleMessage(message) {
       dtv.processKey('Exit');
       tv.control.navigation.exit();
       break;
+    case 'Next':
+      console.log('Next');
+      for (var i = 0; i < 6; i++) {
+        //6 seems to be the right number for commercials
+        setTimeout(() => {dtv.processKey('advance');}, i * 750);
+      }
     default:
       console.log('unimplemented message: ' + message.message);
   }
