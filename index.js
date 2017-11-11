@@ -21,14 +21,6 @@ let headers= {
   }
 };
 
-let http_config = {
-  host : config.mq.host,
-  port: config.mq.port,
-  path : '/api/queue/' + config.clientId,
-  method: 'get',
-  headers : headers
-};
-
 let dtv = new directv.Remote(config.directv.ip);
 
 let tv = new smartcast(config.tv.ip);
@@ -91,25 +83,9 @@ function handleMessage(message) {
 
 }
 
-//Legacy
-/*(function makeRequest() {
-  console.log('Polling mq');
-  var req = http.request(http_config, (res) => {
-    res.on('data', (data) => {
-      console.log('Data recieved ' + data);
-      data = JSON.parse(data);
-      if (!!data && data.length > 0) {
-        data.forEach(handleMessage);
-      }
-    });
-    console.log('Setting timeout');
-    setTimeout(makeRequest, config.pollTime);
-  });
-  req.end();
-});*/
 //TODO queued commands...
 var address = (config.useHttps ? 'https://' : 'http://')
-              + config.mq.host + ':' + config.mq.port + '/queue/' + config.clientId;
+              + config.mq.host + ':' + config.mq.port + '/api/stream/queue/' + config.clientId;
 console.log('connecting to:' + address);
 var es = new eventsource(address, headers);
 es.addEventListener('message', message => {
