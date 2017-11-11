@@ -87,13 +87,20 @@ function handleMessage(message) {
 var address = (config.useHttps ? 'https://' : 'http://')
               + config.mq.host + ':' + config.mq.port + '/api/stream/queue/' + config.clientId;
 console.log('connecting to:' + address);
-var es = new eventsource(address, headers);
-es.addEventListener('message', message => {
-  console.log("recieved message" + message);
-  if (!!message) {
-    var data = JSON.parse(message.data);
-    if (!!data) {
-      handleMessage(data);
+function startStream() {
+  var es = new eventsource(address, headers);
+  es.addEventListener('message', message => {
+    console.log("recieved message" + message);
+    if (!!message) {
+      var data = JSON.parse(message.data);
+      if (!!data) {
+        handleMessage(data);
+      }
     }
+  });
+  es.onerror = function(err) {
+    es.close();
+    setTimeout(startStream, 5000);
   }
-})
+}
+startStream();
