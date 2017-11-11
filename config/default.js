@@ -3,7 +3,7 @@ module.exports = {
   clientId: 'TV',
   pollTime: 5000,
   tv : {
-    ip: '192.168.1.180',
+    ip: '192.168.1.50',
     mac: '',
     token: ''
   },

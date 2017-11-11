@@ -57,10 +57,27 @@ function handleMessage(message) {
     case 'pause':
       console.log('pausing');
       dtv.processKey('pause');
+      tv.control.media.pause();
       break;
     case 'play':
       console.log('playing');
       dtv.processKey('play');
+      tv.control.media.play();
+      break;
+    case "FastForward" :
+      console.log('FF');
+      dtv.processKey('advance');
+      tv.control.media.seek.forward();
+      break;
+    case 'Rewind' :
+      console.log('RW');
+      dtv.processKey('replay');
+      tv.control.media.seek.back();
+      break;
+    case 'Stop':
+      console.log('Stop');
+      dtv.processKey('Exit');
+      tv.control.navigation.exit();
       break;
     default:
       console.log('unimplemented message: ' + message.message);
