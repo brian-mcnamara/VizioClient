@@ -69,7 +69,7 @@ function handleMessage(message) {
     case 'Stop':
       console.log('Stop');
       dtv.processKey('Exit');
-      tv.control.navigation.exit();
+      tv.control.navigate.exit();
       break;
     case 'Next':
       console.log('Next');
