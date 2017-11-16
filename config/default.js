@@ -10,9 +10,9 @@ module.exports = {
     ip : '192.168.1.117'
   },
   mq : {
-    host : 'localhost',
-    port: '8080',
-    username : 'dev',
-    token: 'test'
+    host : '',
+    port: '',
+    username : '',
+    token: ''
   }
 }

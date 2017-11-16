@@ -77,6 +77,7 @@ function handleMessage(message) {
         //6 seems to be the right number for commercials
         setTimeout(() => {dtv.processKey('advance');}, i * 750);
       }
+      break;
     default:
       console.log('unimplemented message: ' + message.message);
   }
@@ -90,7 +91,7 @@ console.log('connecting to:' + address);
 function startStream() {
   var es = new eventsource(address, headers);
   es.addEventListener('message', message => {
-    console.log("recieved message" + message);
+    console.log("recieved message" + JSON.stringify(message));
     if (!!message) {
       var data = JSON.parse(message.data);
       if (!!data) {
