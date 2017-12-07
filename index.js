@@ -78,6 +78,15 @@ function handleMessage(message) {
         setTimeout(() => {dtv.processKey('advance');}, i * 750);
       }
       break;
+    case 'AdjustVolume':
+      console.log('adjusting volume');
+      const value = message.parameters.value;
+      if (value > 0) {
+        tv.control.volume.up();
+      } else {
+        tv.control.volume.down();
+      }
+      break;
     default:
       console.log('unimplemented message: ' + message.message);
   }
