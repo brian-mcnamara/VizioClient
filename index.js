@@ -59,7 +59,7 @@ function handleMessage(message) {
     case "FastForward" :
       console.log('FF');
       dtv.processKey('advance');
-      tv.control.media.seek.forward();
+      tv.control.seek.forward();
       break;
     case 'Rewind' :
       console.log('RW');
@@ -86,6 +86,11 @@ function handleMessage(message) {
       } else {
         tv.control.volume.down();
       }
+      break;
+    case 'SelectInput':
+      console.log('Selecting input');
+      const input = message.parameters.input;
+      tv.input.set(input);
       break;
     default:
       console.log('unimplemented message: ' + message.message);
