@@ -12,6 +12,7 @@
   "dependencies": {
     "btoa": "^1.1.2",
     "config": "^1.27.0",
+    "didyoumean": "^1.2.1",
     "directv-remote": "0.0.3",
     "eventsource": "^1.0.5",
     "node-wol": "^0.1.1",

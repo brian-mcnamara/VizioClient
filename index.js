@@ -4,6 +4,7 @@ let btoa = require('btoa');
 let wakeOnLan = require('node-wol');
 let eventsource = require('eventsource');
 let directv = require('directv-remote');
+let didyoumean = require('didyoumean');
 var http
 if (config.useHttps) {
   console.log('https enabled');
@@ -88,9 +89,22 @@ function handleMessage(message) {
       }
       break;
     case 'SelectInput':
-      console.log('Selecting input');
       const input = message.parameters.input;
-      tv.input.set(input);
+      console.log('Selecting input' + input);
+      tv.input.list().then(resp => {
+        console.log('response: ' + resp);
+        var inputList = [];
+        resp.ITEMS.forEach(item => {
+          inputList.push(item.name);
+          inputList.push(item.value.name);
+        });
+        var inputClosest = didyoumean(input, inputList);
+        if (! inputClosest) {
+          console.log('could not find closest: ' + input + ' from: ' + inputList);
+          return;
+        }
+        tv.input.set(inputClosest);
+      });
       break;
     default:
       console.log('unimplemented message: ' + message.message);
