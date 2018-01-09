@@ -60,7 +60,7 @@ function handleMessage(message) {
     case "FastForward" :
       console.log('FF');
       dtv.processKey('advance');
-      tv.control.seek.forward();
+      tv.control.media.seek.forward();
       break;
     case 'Rewind' :
       console.log('RW');
@@ -92,11 +92,10 @@ function handleMessage(message) {
       const input = message.parameters.input;
       console.log('Selecting input' + input);
       tv.input.list().then(resp => {
-        console.log('response: ' + resp);
         var inputList = [];
         resp.ITEMS.forEach(item => {
-          inputList.push(item.name);
-          inputList.push(item.value.name);
+          inputList.push(item.NAME);
+          inputList.push(item.VALUE.NAME);
         });
         var inputClosest = didyoumean(input, inputList);
         if (! inputClosest) {
@@ -123,7 +122,11 @@ function startStream() {
     if (!!message) {
       var data = JSON.parse(message.data);
       if (!!data) {
-        handleMessage(data);
+        try {
+          handleMessage(data);
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
   });
