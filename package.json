@@ -16,6 +16,6 @@
     "directv-remote": "0.0.3",
     "eventsource": "^1.0.5",
     "node-wol": "^0.1.1",
-    "vizio-smart-cast": "^1.1.6"
+    "vizio-smart-cast": "^1.2.0"
   }
 }
