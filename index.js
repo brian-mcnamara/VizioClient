@@ -130,9 +130,5 @@ function startStream() {
       }
     }
   });
-  es.onerror = function(err) {
-    es.close();
-    setTimeout(startStream, 5000);
-  }
 }
 startStream();
