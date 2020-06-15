@@ -34,6 +34,7 @@ function handleMessage(message) {
       console.log('turning on');
       wakeOnLan.wake(config.tv.mac,
         tv.control.power.on);
+        dtv.processCommand(FA82);
       break;
     case 'powerOff':
       console.log('turning off');
@@ -90,7 +91,6 @@ function handleMessage(message) {
       break;
     case 'SelectInput':
       const input = message.parameters.input;
-      console.log('Selecting input' + input);
       tv.input.list().then(resp => {
         var inputList = [];
         resp.ITEMS.forEach(item => {
@@ -102,6 +102,7 @@ function handleMessage(message) {
           console.log('could not find closest: ' + input + ' from: ' + inputList);
           return;
         }
+        console.log('setting input: ' + inputClosest);
         tv.input.set(inputClosest);
       });
       break;
@@ -130,5 +131,14 @@ function startStream() {
       }
     }
   });
+
+  es.onerror = function(err) {
+    setTimeout(_ => {
+        if (es.readyState === eventsource.CLOSED) {
+            es.close();
+            setTimeout(startStream, 5000);
+        }
+    }, 0);
+  }
 }
 startStream();
