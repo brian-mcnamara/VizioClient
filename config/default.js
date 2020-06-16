@@ -14,7 +14,7 @@ module.exports = {
     port: '',
     username : '',
     token: ''
-  }
+  },
   channels : {
     cnn : 222,
     food : 231,
