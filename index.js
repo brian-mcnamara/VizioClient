@@ -115,11 +115,14 @@ function handleMessage(message) {
             console.log("Trying to find channel name " + channelName);
             let guess = didyoumean(channelName, Object.keys(channelMap));
             if (!!guess) {
+                console.log("Switching to channel " + channelMap[guess])
                 dtv.tune(channelMap[guess])
             }
         } else if (channel.channel.number) {
+            console.log("Switching to channel " + channel.channel.number)
             dtv.tune(channel.channel.number)
         }
+        break;
     default:
       console.log('unimplemented message: ' + message.message);
   }
