@@ -113,7 +113,7 @@ function handleMessage(message) {
         if (channel.channelMetadata.name) {
             let channelName = channel.channelMetadata.name;
             console.log("Trying to find channel name " + channelName);
-            let guess = didyoumean(channelName, channelMap.keys());
+            let guess = didyoumean(channelName, Object.keys(channelMap));
             if (!!guess) {
                 dtv.tune(channelMap[guess])
             }
