@@ -27,6 +27,8 @@ let dtv = new directv.Remote(config.directv.ip);
 let tv = new smartcast(config.tv.ip);
 tv.pairing.useAuthToken(config.tv.token);
 
+let channelMap = config.channels || {}
+
 function handleMessage(message) {
   console.log('Handling message' + JSON.stringify(message));
   switch (message.message) {
@@ -106,6 +108,17 @@ function handleMessage(message) {
         tv.input.set(inputClosest);
       });
       break;
+      case 'ChangeChannel':
+        const channel = JSON.parse(message.parameters.channel);
+        if (channel.channelMetadata.name) {
+            let channelName = channel.channelMetadata.name;
+            let guess = didyoumean(channelName, channelMap.keys());
+            if (!!guess) {
+                dtv.tune(channelMap[guess])
+            }
+        } else if (channel.channel.number) {
+            dtv.tune(channel.channel.number)
+        }
     default:
       console.log('unimplemented message: ' + message.message);
   }
