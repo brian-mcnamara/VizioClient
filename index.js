@@ -138,7 +138,7 @@ async function doubleDown() {
     var getTuner = async function() {
         return await processCommand('FA83').then(value => {
                     var data = (value.return || {}).data
-                    return data.length > 21 ? data[21] : 0;
+                    return data.length > 32 ? data[32] : 0;
                 })
     }
     var currentTuner = await getTuner();
