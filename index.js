@@ -143,7 +143,9 @@ async function doubleDown() {
     }
     var currentTuner = await getTuner();
 
-    processKey('down').then(getTuner).then(newTuner => {
+    return processKey('down').then(_ => new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+    })).then(getTuner).then(newTuner => {
         if (currentTuner == newTuner) {
             processKey('down')
         }
