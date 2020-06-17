@@ -16,7 +16,7 @@ module.exports = {
     token: ''
   },
   channels : {
-    cnn : 222,
+    cnn : 202,
     food : 231,
     cook : 232,
     tbs : 247,
@@ -24,6 +24,6 @@ module.exports = {
     "comedy central" : 249,
     amc : 254,
     fxx: 259,
-    "adult swim": 296,
+    "cartoon network adult swim": 296,
   }
 }

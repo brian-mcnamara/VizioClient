@@ -123,10 +123,54 @@ function handleMessage(message) {
             dtv.tune(channel.channel.number)
         }
         break;
+
+    case 'DoubleDown':
+        dtv.processKey('pause');
+        doubleDown()
+        break;
     default:
       console.log('unimplemented message: ' + message.message);
   }
 
+}
+
+async function doubleDown() {
+    var getTuner = async function() {
+        return await processCommand('FA83').then(value => {
+                    var data = (value.return || {}).data
+                    return data.length > 21 ? data[21] : 0;
+                })
+    }
+    var currentTuner = await getTuner();
+
+    processKey('down').then(getTuner).then(newTuner => {
+        if (currentTuner == newTuner) {
+            processKey('down')
+        }
+    });
+}
+
+async function processCommand(command) {
+    return new Promise((resolve, reject) => {
+        dtv.processCommand(command, function(err, resp) {
+            if (!!err) {
+                reject(err)
+            } else {
+                resolve(resp)
+            }
+        })
+    })
+}
+
+async function processKey(key) {
+    return new Promise((resolve, reject) => {
+        dtv.processKey(key, undefined, function(err, resp) {
+            if (!!err) {
+                reject(err)
+            }
+            resolve()
+        })
+    })
 }
 
 //TODO queued commands...
