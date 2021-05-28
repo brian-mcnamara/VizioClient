@@ -41,7 +41,7 @@ function handleMessage(message) {
   switch (message.message) {
     case 'powerOn':
       console.log('turning on');
-      tv.powerOn();
+      tv.turnOn();
       break;
     case 'powerOff':
       console.log('turning off');
