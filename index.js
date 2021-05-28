@@ -1,4 +1,4 @@
-let smartcast = require('vizio-smart-cast');
+const { Samsung, KEYS, APPS } = require('samsung-tv-control')
 let config = require('config');
 let btoa = require('btoa');
 let wakeOnLan = require('node-wol');
@@ -24,9 +24,15 @@ let headers= {
 
 let dtv = new directv.Remote(config.directv.ip);
 let ca = config.directv.clientAddr;
+const tvConfig = {
+  ip : config.tv.ip, 
+  mac: config.tv.mac, 
+  nameApp: "tv-controller", 
+  port : 8002,
+  token: config.tv.token
+}
 
-let tv = new smartcast(config.tv.ip);
-tv.pairing.useAuthToken(config.tv.token);
+let tv = new Samsung(tvConfig);
 
 let channelMap = config.channels || {}
 
@@ -35,46 +41,41 @@ function handleMessage(message) {
   switch (message.message) {
     case 'powerOn':
       console.log('turning on');
-      wakeOnLan.wake(config.tv.mac,
-        tv.control.power.on);
-        dtv.processCommand(FA82, ca);
+      tv.powerOn();
       break;
     case 'powerOff':
       console.log('turning off');
-      tv.control.power.off();
+      tv.sendKey(KEYS.KEY_POWER);
       break;
     case 'mute':
       console.log('muteing');
-      tv.control.volume.mute();
+      tv.sendKey(KEYS.KEY_MUTE);
       break;
     case 'unmute':
       console.log('unmuteing');
-      tv.control.volume.unmute();
+      tv.sendKey(KEYS.KEY_MUTE);
       break;
     case 'pause':
       console.log('pausing');
       dtv.processKey('pause', ca);
-      tv.control.media.pause();
+      tv.sendKey(KEYS.KEY_PAUSE);
       break;
     case 'play':
       console.log('playing');
       dtv.processKey('play', ca);
-      tv.control.media.play();
+      tv.sendKey(KEYS.KEY_PLAY);
       break;
     case "FastForward" :
       console.log('FF');
       dtv.processKey('advance', ca);
-      tv.control.media.seek.forward();
       break;
     case 'Rewind' :
       console.log('RW');
       dtv.processKey('replay', ca);
-      tv.control.media.seek.back();
       break;
     case 'Stop':
       console.log('Stop');
       dtv.processKey('Exit', ca);
-      tv.control.navigate.exit();
       break;
     case 'Next':
       console.log('Next');
@@ -87,50 +88,50 @@ function handleMessage(message) {
       console.log('adjusting volume');
       const value = message.parameters.value;
       if (value > 0) {
-        tv.control.volume.up();
+        tv.sendKey(KEYS.KEY_VOLUP);
       } else {
-        tv.control.volume.down();
+        tv.sendKey(KEYS.KEY_VOLUP);
       }
       break;
     case 'SelectInput':
       const input = message.parameters.input;
-      tv.input.list().then(resp => {
-        var inputList = [];
-        resp.ITEMS.forEach(item => {
-          inputList.push(item.NAME);
-          inputList.push(item.VALUE.NAME);
-        });
-        var inputClosest = didyoumean(input, inputList);
-        if (! inputClosest) {
-          console.log('could not find closest: ' + input + ' from: ' + inputList);
-          return;
-        }
-        console.log('setting input: ' + inputClosest);
-        tv.input.set(inputClosest);
-      });
+      var inputList = ["HDMI1", "HDMI2", "HDMI4"];
+      var inputClosest = didyoumean(input, inputList);
+      if (! inputClosest) {
+        console.log('could not find closest: ' + input + ' from: ' + inputList);
+        return;
+      }
+      console.log('setting input: ' + inputClosest);
+      if(inputClosest === "HDMI1") {
+        tv.sendKey(KEYS.KEY_HDMI1);
+      } else if (inputClosest === "HDMI2") {
+        tv.sendKey(KEYS.KEY_HDMI2);
+      } else if (inputClosest === "HDMI4") {
+        tv.sendKey(KEYS.KEY_HDMI4);
+      }
       break;
-      case 'ChangeChannel':
-        const channel = JSON.parse(message.parameters.channel);
-        if (channel.channelMetadata.name) {
-            let channelName = channel.channelMetadata.name;
-            console.log("Trying to find channel name " + channelName);
-            let guess = didyoumean(channelName, Object.keys(channelMap));
-            if (!!guess) {
-                console.log("Switching to channel " + channelMap[guess])
-                dtv.tune(channelMap[guess], ca)
-            }
-        } else if (channel.channel.number) {
-            console.log("Switching to channel " + channel.channel.number)
-            dtv.tune(channel.channel.number, ca)
-        }
-        break;
+    case 'ChangeChannel':
+      const channel = JSON.parse(message.parameters.channel);
+      if (channel.channelMetadata.name) {
+          let channelName = channel.channelMetadata.name;
+          console.log("Trying to find channel name " + channelName);
+          let guess = didyoumean(channelName, Object.keys(channelMap));
+          if (!!guess) {
+              console.log("Switching to channel " + channelMap[guess])
+              dtv.tune(channelMap[guess], ca)
+          }
+      } else if (channel.channel.number) {
+          console.log("Switching to channel " + channel.channel.number)
+          dtv.tune(channel.channel.number, ca)
+      }
+      break;
 
     case 'DoubleDown':
-        realPause().then(doubleDown);
-        break;
+      realPause().then(doubleDown);
+      break;
     case 'ping':
-	//ping message
-	break;
+	    //ping message
+	    break;
     default:
       console.log('unimplemented message: ' + message.message);
   }

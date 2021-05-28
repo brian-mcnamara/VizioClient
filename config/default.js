@@ -2,7 +2,7 @@ module.exports = {
   useHttps: true,
   clientId: 'TV',
   tv : {
-    ip: '192.168.1.50',
+    ip: '192.168.1.85',
     mac: '',
     token: ''
   },
